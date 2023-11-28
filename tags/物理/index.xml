@@ -39,7 +39,7 @@
 &lt;p&gt;考虑一束光线，它可能是完全偏振的，或者可能是部分偏振的，又可能是完全不偏振的自然光。这样的一束光线经过某一偏振器件（诸如起偏器、推迟器、旋光物质），出射光的偏振态可能会与入射光的有所区别。&lt;/p&gt;
 &lt;p&gt;若我们能够找到一种数学方法，去规定每一种光线的偏振态是怎样的数学形式，再规定每一种偏振器件会是怎样的数学形式，并且利用这种方法，可以在给定出射光和偏振器件的条件下，很方便地求得出射光的偏振态，这正是我们想要的。&lt;/p&gt;
 &lt;p&gt;可行吗？可行。那这样的方法会是什么样子的？&lt;/p&gt;
-&lt;p&gt;我们知道，一束偏振光可以分解为若干个不同的偏振光。例如：一个 $\mathscr{R}$ 态光（右旋圆偏振，也叫右圆光），可以分解为两个正交的 $\mathscr{P}$ 态光（线偏振光），对 $\mathscr{L}$ 态光（左旋圆偏振，也叫左圆光）同样可以这样子分解。又例如：一个左旋 $\mathscr{E}$ 态光（左旋椭圆光，即电场随相位变化，画的是椭圆），可以分解为一个 $\mathscr{L}$ 态光，与平行于椭圆长轴的 $\mathscr{P}$ 态光，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be1&#34; &gt;图 1&lt;/a&gt; 所示。&lt;/p&gt;
+&lt;p&gt;我们知道，一束偏振光可以分解为若干个不同的偏振光。例如：一个 $\mathscr{R}$ 态光（右旋圆偏振，也叫右圆光），可以分解为两个正交的 $\mathscr{P}$ 态光（线偏振光），对 $\mathscr{L}$ 态光（左旋圆偏振，也叫左圆光）同样可以这样子分解。又例如：一个左旋 $\mathscr{E}$ 态光（左旋椭圆光，即电场随相位变化，画的是椭圆），可以分解为一个 $\mathscr{L}$ 态光，与平行于椭圆长轴的 $\mathscr{P}$ 态光，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be1&#34; &gt;图1&lt;/a&gt; 所示。&lt;/p&gt;
 &lt;p&gt;&lt;a id=&#34;图1&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p01.png&#34;
 	width=&#34;1500&#34;
 	height=&#34;689&#34;
@@ -57,7 +57,7 @@
 &lt;p&gt;只要我们能够把任意偏振态的一束光分解为分偏振态之和，这些分偏振态又可以表示成一组数字。把这些数字写成一个矢量，则矢量中的每个元素都说明了这束光的分偏振态会是如何，自然就能表示这束光的偏振态了。&lt;/p&gt;
 &lt;p&gt;接下来考虑偏振器件。一束偏振光（也就是一个包含分偏振信息的矢量），经过某一偏振器件，出射光的偏振矢量与入射光的不同。对于这样的物理现象，很自然的想法是把这些偏振器件写作一个矩阵（例如矩阵 $\boldsymbol{M}$ ）。&lt;/p&gt;
 &lt;p&gt;防止读者不知道，需要对线性变换进行说明。一个矩阵对应着一个线性变换（保持原点位置固定，空间的旋转、拉伸，诸如此类）。原线性空间中的一个矢量 $\boldsymbol{\alpha}$ ，左乘一个矩阵 $\boldsymbol{M}$ ，则 $\boldsymbol{\alpha}^{\prime} = \boldsymbol{M\alpha}$ 可以理解为：该矢量 $\boldsymbol{\alpha}$ “跟着” 原线性空间作线性变换，则 “跟着” 作完线性变换后的矢量，落在最开始的原线性空间的何处。“何处” 可以用 $\boldsymbol{\alpha}^{\prime}$ 来表示。亦即矩阵中的每一个元素与矢量的每一个分量相互作用（矩阵乘法运算），构建出新的矢量。也就是说，矢量 $\boldsymbol{\alpha}$ 左乘矩阵 $\boldsymbol{M}$ ，矢量改变了。&lt;/p&gt;
-&lt;p&gt;如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图 2(a)&lt;/a&gt; 所示，现在二维直角坐标系内有一矢量 $\langle 1,2 \rangle$ ，且 $\hat{\boldsymbol\imath} = \langle 1,0 \rangle ,\hat{\boldsymbol\jmath} = \langle 0,1 \rangle$ 分别是 $x$ 方向和 $y$ 方向的单位矢量（二维空间的基）。如今，我们把这个空间拉伸、旋转，使得原空间变形，原来的 $\hat{\boldsymbol\imath}$ 变成了 $\hat{\boldsymbol\imath} = \langle 3,-2 \rangle$ ，原来的 $\hat{\boldsymbol\jmath}$ 变成了 $\hat{\boldsymbol\jmath} = \langle 1,3 \rangle$ ，则矢量 $\langle 1,2 \rangle$ 会 “跟着” 转移到 $\langle 5,4 \rangle$ ，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图 2(b)(c)&lt;/a&gt; 所示。&lt;/p&gt;
+&lt;p&gt;如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图2(a)&lt;/a&gt; 所示，现在二维直角坐标系内有一矢量 $\langle 1,2 \rangle$ ，且 $\hat{\boldsymbol\imath} = \langle 1,0 \rangle ,\hat{\boldsymbol\jmath} = \langle 0,1 \rangle$ 分别是 $x$ 方向和 $y$ 方向的单位矢量（二维空间的基）。如今，我们把这个空间拉伸、旋转，使得原空间变形，原来的 $\hat{\boldsymbol\imath}$ 变成了 $\hat{\boldsymbol\imath} = \langle 3,-2 \rangle$ ，原来的 $\hat{\boldsymbol\jmath}$ 变成了 $\hat{\boldsymbol\jmath} = \langle 1,3 \rangle$ ，则矢量 $\langle 1,2 \rangle$ 会 “跟着” 转移到 $\langle 5,4 \rangle$ ，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图2(b)(c)&lt;/a&gt; 所示。&lt;/p&gt;
 &lt;p&gt;&lt;a id=&#34;图2&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p02.png&#34;
 	width=&#34;2116&#34;
 	height=&#34;779&#34;
@@ -72,7 +72,7 @@
 		data-flex-basis=&#34;651px&#34;
 	
 &gt;&lt;/p&gt;
-&lt;p&gt;若我们把 $\langle 1,2 \rangle$ 转移到 $\langle 5,4 \rangle$ 的过程，看成是 $1$ 倍的 $\hat{\boldsymbol\imath}$ 与 $2$ 倍的 $\hat{\boldsymbol\jmath}$ 相加，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图 2(b)&lt;/a&gt; 所示，即&lt;/p&gt;
+&lt;p&gt;若我们把 $\langle 1,2 \rangle$ 转移到 $\langle 5,4 \rangle$ 的过程，看成是 $1$ 倍的 $\hat{\boldsymbol\imath}$ 与 $2$ 倍的 $\hat{\boldsymbol\jmath}$ 相加，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图2(b)&lt;/a&gt; 所示，即&lt;/p&gt;
 &lt;div class=&#34;equation&#34;&gt;
 \begin{equation}\label{}
     \left(
@@ -155,7 +155,7 @@
 &lt;blockquote&gt;
 &lt;p&gt;这里笔者忍不住抱怨一句，很多文献没能把这段内容讲清楚，导致包括我在内的很多人在学习的过程中晕头转向，对 Stokes 参量的由来模糊不清，因此在这里会尽我所能讲解得详细一些。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;考虑一束部分水平偏振光，可以将其分解为一个自然光 $\mathscr{N}$ 和水平的 $\mathscr{P}$ 态偏振光，这二者贡献的辐照度分别为 $I_\mathscr{N}$ 和 $I_\mathscr{P}$ ，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be3&#34; &gt;图 3&lt;/a&gt; 所示。&lt;/p&gt;
+&lt;p&gt;考虑一束部分水平偏振光，可以将其分解为一个自然光 $\mathscr{N}$ 和水平的 $\mathscr{P}$ 态偏振光，这二者贡献的辐照度分别为 $I_\mathscr{N}$ 和 $I_\mathscr{P}$ ，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be3&#34; &gt;图3&lt;/a&gt; 所示。&lt;/p&gt;
 &lt;p&gt;&lt;a id=&#34;图3&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p03.png&#34;
 	width=&#34;1480&#34;
 	height=&#34;780&#34;
@@ -183,7 +183,7 @@
     I_1 = \frac{1}{2}I_\mathscr{N} + I_\mathscr{P}
 \end{equation}
 &lt;/div&gt;
-&lt;p&gt;将 $I_1$ 和 $I_0$ 作差乘以 $2$ ，并由 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f3&#34; &gt;式 3&lt;/a&gt; 可知&lt;/p&gt;
+&lt;p&gt;将 $I_1$ 和 $I_0$ 作差乘以 $2$ ，并由 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f3&#34; &gt;式3&lt;/a&gt; 可知&lt;/p&gt;
 &lt;div class=&#34;equation&#34;&gt;
 \begin{equation}
     \mathcal{S}_1 = 2I_1 - 2I_0= I_\mathscr{P}
