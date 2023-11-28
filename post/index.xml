@@ -1,0 +1,900 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on 小鹰の巢</title>
+        <link>https://demo.stack.jimmycai.com/post/</link>
+        <description>Recent content in Posts on 小鹰の巢</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Wed, 29 Nov 2023 03:37:39 +0800</lastBuildDate><atom:link href="https://demo.stack.jimmycai.com/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>偏振光的矩阵处理方法初步</title>
+        <link>https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/</link>
+        <pubDate>Wed, 29 Nov 2023 03:37:39 +0800</pubDate>
+        
+        <guid>https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/</guid>
+        <description>&lt;script&gt;
+    window.MathJax = {
+    tex: {
+      tags: &#39;ams&#39;, /* Enable automatic numbering */
+      inlineMath: [[&#39;$&#39;, &#39;$&#39;], [&#39;\\(&#39;, &#39;\\)&#39;]]
+    },
+  };
+&lt;/script&gt;
+&lt;script src=&#34;https://polyfill.io/v3/polyfill.min.js?features=es6&#34;&gt;&lt;/script&gt;
+&lt;script id=&#34;MathJax-script&#34; async src=&#34;https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-chtml.js&#34;&gt;&lt;/script&gt;
+&lt;blockquote&gt;
+&lt;p&gt;你阅读这篇文章，需要具备以下前置知识：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;矢量加法、内积运算；&lt;/li&gt;
+&lt;li&gt;三角函数的运算；&lt;/li&gt;
+&lt;li&gt;积分的意义，如何对函数进行积分；&lt;/li&gt;
+&lt;li&gt;什么是矩阵，矩阵的运算；&lt;/li&gt;
+&lt;li&gt;复数、复平面，Euler（欧拉 1707-1783）公式 $\mathrm{e}^{\mathrm{j}\varphi} = \cos\left( \varphi \right)+\mathrm{j}\sin\left( \varphi \right)$ ，复矢量的基本运算；&lt;/li&gt;
+&lt;li&gt;对光的基本认识，明白什么是辐照度 $I = c\epsilon_0\langle \boldsymbol{E}^2 \rangle _\mathrm{T}$ ；&lt;/li&gt;
+&lt;li&gt;明白什么是光的偏振，也明白各种偏振器件。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;上述内容当然是懂得的越多越好，不过会对一些重要且有必要说明的概念进行简单的阐述。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;引言--introduction&#34;&gt;引言 | Introduction&lt;/h2&gt;
+&lt;p&gt;考虑一束光线，它可能是完全偏振的，或者可能是部分偏振的，又可能是完全不偏振的自然光。这样的一束光线经过某一偏振器件（诸如起偏器、推迟器、旋光物质），出射光的偏振态可能会与入射光的有所区别。&lt;/p&gt;
+&lt;p&gt;若我们能够找到一种数学方法，去规定每一种光线的偏振态是怎样的数学形式，再规定每一种偏振器件会是怎样的数学形式，并且利用这种方法，可以在给定出射光和偏振器件的条件下，很方便地求得出射光的偏振态，这正是我们想要的。&lt;/p&gt;
+&lt;p&gt;可行吗？可行。那这样的方法会是什么样子的？&lt;/p&gt;
+&lt;p&gt;我们知道，一束偏振光可以分解为若干个不同的偏振光。例如：一个 $\mathscr{R}$ 态光（右旋圆偏振，也叫右圆光），可以分解为两个正交的 $\mathscr{P}$ 态光（线偏振光），对 $\mathscr{L}$ 态光（左旋圆偏振，也叫左圆光）同样可以这样子分解。又例如：一个左旋 $\mathscr{E}$ 态光（左旋椭圆光，即电场随相位变化，画的是椭圆），可以分解为一个 $\mathscr{L}$ 态光，与平行于椭圆长轴的 $\mathscr{P}$ 态光，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be1&#34; &gt;图 1&lt;/a&gt; 所示。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图1&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p01.png&#34;
+	width=&#34;1500&#34;
+	height=&#34;689&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p01_huf856c492f8ccaeef93c9d634f1a98175_82172_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p01_huf856c492f8ccaeef93c9d634f1a98175_82172_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 1 ] E₁、E₂ 分别为 𝓟 态光和 ℒ 态光的电场矢量，E 为左旋 ℰ 态偏振光的合电场矢量。现在请尝试在脑中构建这样的画面：𝓟 态光从 x 轴正方向最大值开始水平（沿 x 轴）来回振动，ℒ 态光从与 x 轴正方向夹角为 0 开始逆时针转动，如今 𝓟 态光与 ℒ 态光振动的时间周期相同，则 ℰ 态光也做同等周期的左旋转动。图中所示的是 ℰ 态光相位角为 φ 时的情况。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;217&#34;
+		data-flex-basis=&#34;522px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;只要我们能够把任意偏振态的一束光分解为分偏振态之和，这些分偏振态又可以表示成一组数字。把这些数字写成一个矢量，则矢量中的每个元素都说明了这束光的分偏振态会是如何，自然就能表示这束光的偏振态了。&lt;/p&gt;
+&lt;p&gt;接下来考虑偏振器件。一束偏振光（也就是一个包含分偏振信息的矢量），经过某一偏振器件，出射光的偏振矢量与入射光的不同。对于这样的物理现象，很自然的想法是把这些偏振器件写作一个矩阵（例如矩阵 $\boldsymbol{M}$ ）。&lt;/p&gt;
+&lt;p&gt;防止读者不知道，需要对线性变换进行说明。一个矩阵对应着一个线性变换（保持原点位置固定，空间的旋转、拉伸，诸如此类）。原线性空间中的一个矢量 $\boldsymbol{\alpha}$ ，左乘一个矩阵 $\boldsymbol{M}$ ，则 $\boldsymbol{\alpha}^{\prime} = \boldsymbol{M\alpha}$ 可以理解为：该矢量 $\boldsymbol{\alpha}$ “跟着” 原线性空间作线性变换，则 “跟着” 作完线性变换后的矢量，落在最开始的原线性空间的何处。“何处” 可以用 $\boldsymbol{\alpha}^{\prime}$ 来表示。亦即矩阵中的每一个元素与矢量的每一个分量相互作用（矩阵乘法运算），构建出新的矢量。也就是说，矢量 $\boldsymbol{\alpha}$ 左乘矩阵 $\boldsymbol{M}$ ，矢量改变了。&lt;/p&gt;
+&lt;p&gt;如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图 2(a)&lt;/a&gt; 所示，现在二维直角坐标系内有一矢量 $\langle 1,2 \rangle$ ，且 $\hat{\boldsymbol\imath} = \langle 1,0 \rangle ,\hat{\boldsymbol\jmath} = \langle 0,1 \rangle$ 分别是 $x$ 方向和 $y$ 方向的单位矢量（二维空间的基）。如今，我们把这个空间拉伸、旋转，使得原空间变形，原来的 $\hat{\boldsymbol\imath}$ 变成了 $\hat{\boldsymbol\imath} = \langle 3,-2 \rangle$ ，原来的 $\hat{\boldsymbol\jmath}$ 变成了 $\hat{\boldsymbol\jmath} = \langle 1,3 \rangle$ ，则矢量 $\langle 1,2 \rangle$ 会 “跟着” 转移到 $\langle 5,4 \rangle$ ，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图 2(b)(c)&lt;/a&gt; 所示。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图2&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p02.png&#34;
+	width=&#34;2116&#34;
+	height=&#34;779&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p02_hu3fc75b97ef90be59f7a2fb2ffdd61333_69779_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p02_hu3fc75b97ef90be59f7a2fb2ffdd61333_69779_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 2 ] 线性变换。(a) 原空间中的一组基，和一个矢量 α = &amp;lt;1,2&amp;gt; 。(b) 原空间变形，即进行了线性变换 M ，矢量 α 随着空间变形，移动到了新的位置上。(c) 新的位置位于原空间中的 &amp;lt;5,4&amp;gt; 处。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;271&#34;
+		data-flex-basis=&#34;651px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;若我们把 $\langle 1,2 \rangle$ 转移到 $\langle 5,4 \rangle$ 的过程，看成是 $1$ 倍的 $\hat{\boldsymbol\imath}$ 与 $2$ 倍的 $\hat{\boldsymbol\jmath}$ 相加，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be2&#34; &gt;图 2(b)&lt;/a&gt; 所示，即&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}\label{}
+    \left(
+        \begin{matrix}
+            5 \\
+            4
+        \end{matrix}
+    \right) = 1\cdot\left(
+        \begin{matrix}
+            3 \\
+            -2
+        \end{matrix}
+    \right) + 2\cdot\left(
+        \begin{matrix}
+            1 \\
+            3
+        \end{matrix}
+    \right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;注意等式的右面可以写成矩阵乘积的形式，即&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    1\cdot\left(
+        \begin{matrix}
+            3 \\
+            -2
+        \end{matrix}
+    \right) + 2\cdot\left(
+        \begin{matrix}
+            1 \\
+            3
+        \end{matrix}
+    \right) = \left(
+    \begin{array}{r}
+        3\times 1+1\times 2 \\
+        -2\times 1+3\times 2
+    \end{array}\right) = \left(
+    \begin{array}{r r}
+        3 &amp; 1 \\
+        -2 &amp; 3
+    \end{array}\right)\left(
+    \begin{array}{}
+        1 \\
+        2
+    \end{array}\right) = \boldsymbol{M\alpha}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;矩阵的第一列和第二列正是经过线性变换后的基。这样一来，便可以通过一个线性变换 $\boldsymbol{M}$ ，来改变矢量 $\boldsymbol{\alpha}$ 。&lt;/p&gt;
+&lt;p&gt;对于一束用矢量表示的偏振光来说，左乘一个矩阵 $\boldsymbol{M}$ ，变成了新的矢量，即新的偏振态，则这个矩阵 $\boldsymbol{M}$ 正是描述这是何种偏振器件，这是偏振器件的固有性质。一个偏振器件，对应一个线性变换，这是很聪明的做法。记住，一个矢量也是一个矩阵，只不过是单行（或者单列）的 “长条形” 的矩阵罢了。&lt;/p&gt;
+&lt;p&gt;接下来的矩阵处理方法来自于爱尔兰物理学家 Stokes（斯托克斯 1819—1903）爵士、美国物理学家 Jones（琼斯 1916-2004），和瑞士物理学家 Mueller（缪勒 1900–1965）做出的贡献。这种方法无非就是矩阵乘法这类简单的数学运算，所以使用起来非常简单。顺带说一句，Mueller 在 1943 年发明 Mueller 矩阵时正担任美国 MIT 教授。&lt;/p&gt;
+&lt;h2 id=&#34;stokes-矢量与-mueller-矩阵&#34;&gt;Stokes 矢量与 Mueller 矩阵&lt;/h2&gt;
+&lt;h3 id=&#34;stokes-矢量&#34;&gt;Stokes 矢量&lt;/h3&gt;
+&lt;p&gt;对偏振光的数学处理方法最开始起源于 Stokes 爵士的工作，他引入了四个辐照度参量 $\mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3$ ，叫做 Stokes 参量，并将其组合成一个四维矢量 $\langle \mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3 \rangle$ ，来描述一束光线的偏振态。其实 Stokes 参量在不同文献下，符号体系相当混乱：有用 $I,M,C,S$ 的，也有用 $I,Q,U,V$ 的，不过本文将使用 $\mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3$ 。我们先在开头给出 Stokes 参量的定义，后面将对其进行说明。&lt;/p&gt;
+&lt;h4 id=&#34;stokes-参量&#34;&gt;Stokes 参量&lt;/h4&gt;
+&lt;p&gt;令一束辐照度为 $2I_0$ 的光分别通过以下四个滤光面与入射光线垂直的滤光片：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;各向同性的滤光片，若一束任意偏振态的光线通过，每个分偏振态的辐照度都被各向同性地吸收一半；&lt;/li&gt;
+&lt;li&gt;透光轴为水平的线起偏器；&lt;/li&gt;
+&lt;li&gt;透光轴位于一、三象限，与水平 $x$ 轴夹角呈 $+45^\circ$ 的线起偏器；&lt;/li&gt;
+&lt;li&gt;圆偏振器，对 $\mathscr{R}$ 态透明，对 $\mathscr{L}$ 态不透明。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;在每个偏振器件后面放置一个探测器，测量透过的辐照度，分别为 $I_0,I_1,I_2,I_3$ ，则 Stokes 参量定义为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \left\{
+        \begin{array}{l}
+            \mathcal{S}_0 = 2I_0 \\
+            \mathcal{S}_1 = 2I_1-2I_0 \\
+            \mathcal{S}_2 = 2I_2-2I_0 \\
+            \mathcal{S}_3 = 2I_3-2I_0 \\
+        \end{array}
+    \right.
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;每一个 $\mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3$ 都规定了入射光的偏振态。$\mathcal{S}_0$ 是入射的总辐照度。$\mathcal{S}_1&amp;gt;0$ 说明入射光更接近水平的 $\mathscr{P}$ 态，反之 $\mathcal{S}_1&amp;gt;0$ 则说明更接近竖直的 $\mathscr{P}$ 态；$\mathcal{S}_2&amp;gt;0$ 说明入射光更接近 $+45^\circ$ 的 $\mathscr{P}$ 态，反之 $\mathcal{S}_2&amp;gt;0$ 则说明更接近 $-45^\circ$ 的 $\mathscr{P}$ 态；$\mathcal{S}_3&amp;gt;0$ 说明入射光更接近 $\mathscr{R}$ 态，反之 $\mathcal{S}_3&amp;gt;0$ 则说明更接近 $\mathscr{L}$ 态。Stokes 矢量 $\langle \mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3 \rangle$ 可以完全描述一束光的偏振态，并且 Stokes 矢量更常用列矢量的形式。&lt;/p&gt;
+&lt;p&gt;需要注意的是，以上四个滤光片的取法并不唯一，只不过 Stokes 本人是这样处理的。&lt;/p&gt;
+&lt;h4 id=&#34;对-stokes-参量的说明&#34;&gt;对 Stokes 参量的说明&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这里笔者忍不住抱怨一句，很多文献没能把这段内容讲清楚，导致包括我在内的很多人在学习的过程中晕头转向，对 Stokes 参量的由来模糊不清，因此在这里会尽我所能讲解得详细一些。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;考虑一束部分水平偏振光，可以将其分解为一个自然光 $\mathscr{N}$ 和水平的 $\mathscr{P}$ 态偏振光，这二者贡献的辐照度分别为 $I_\mathscr{N}$ 和 $I_\mathscr{P}$ ，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be3&#34; &gt;图 3&lt;/a&gt; 所示。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图3&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p03.png&#34;
+	width=&#34;1480&#34;
+	height=&#34;780&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p03_hu92e28ceeaf0484d6d96873430e2e189c_37441_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p03_hu92e28ceeaf0484d6d96873430e2e189c_37441_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 3 ] 将一束部分水平偏振光分解为 𝒩 光和 𝒫 光，它分别通过 1 号器件和 2 号器件，可以发现透射的光偏振态不同。(a) 透过 1 号器件，不论是 𝒩 光还是 𝒫 光，辐照度都被吸收一半。(b) 透过 2 号器件，𝒫 光全部透射，𝒩 光被吸收一半。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;189&#34;
+		data-flex-basis=&#34;455px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;对于 $\mathcal{S}_0 = 2I_0$ 理解起来应该不难。很直观，因为 1 号偏振器件是各向同性的，所以对任何的偏振态直接吸收掉一半的光，$2I_0$ 中的 $2$ 正是这个意思，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be3&#34; &gt;图 3(a)&lt;/a&gt; 所示。因此我们可以写出 $I_0$ 的表达式&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    I_0 = \frac{1}{2}I_\mathscr{N} + \frac{1}{2}I_\mathscr{P}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;接下来考虑 $\mathcal{S}_1 = 2I_1-2I_0$ 。前面说过，$2I_0$ 是入射光的总辐照度。仔细想想，1 号滤光片把所有偏振态的光线都吸收了一半，此时探测器探测到 $I_0$ 。如果现在把 1 号滤光片换成 2 号水平线偏振片，原本被 1 号滤光片吸收的 $\mathscr{P}$ 态光现在可全部透过。竖直方向的 $\mathscr{N}$ 光被全部吸收，水平方向的 $\mathscr{N}$ 光全部透过，故 $\mathscr{N}$ 光的辐照度依旧被吸收一半，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be3&#34; &gt;图 3(b)&lt;/a&gt; 所示。此时探测器探测到的 $I_1$ 为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    I_1 = \frac{1}{2}I_\mathscr{N} + I_\mathscr{P}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;将 $I_1$ 和 $I_0$ 作差乘以 $2$ ，并由 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f3&#34; &gt;式 3&lt;/a&gt; 可知&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \mathcal{S}_1 = 2I_1 - 2I_0= I_\mathscr{P}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;这正是入射光辐照度中，水平偏振的部分，这也正是 Stokes 参量中第二项 $\mathcal{S}_1$ 的意义。记住，此时 $\mathcal{S}_1&amp;gt;0$ 。&lt;/p&gt;
+&lt;p&gt;反之，若入射的部分偏振光更接近竖直 $\mathscr{P}$ 态，也就是说此时 $\mathscr{P}$ 态分量在竖直方向，此时用同样的方法作图，不难得到 Stokes 参量的第二项为 $\mathcal{S}_1 = -I_\mathscr{P}$ ，这依旧是描述入射光的偏振态如何的参量，只不过入射光在更接近竖直偏振的情况下，$\mathcal{S}_1&amp;lt;0$ 。因此可以想象，如果同时含有水平和竖直偏振的成分，则 $\mathcal{S}_1$ 应该是水平偏振辐照度和竖直偏振辐照度作差。&lt;/p&gt;
+&lt;p&gt;同样的道理，其余两个 Stokes 参量 $\mathcal{S}_2,\mathcal{S}_3$ 也可以如此来表示，无非就是把中间的滤光器换成另外两种。即更接近 $+45^\circ$ 偏振时，$\mathcal{S}_3&amp;gt;0$ ，反之，更接近 $-45^\circ$ 偏振时，$\mathcal{S}_3&amp;lt;0$ ；更接近 $\mathscr{R}$ 态光时，$\mathcal{S}_4&amp;gt;0$ ，反之，更接近 $\mathscr{L}$ 态光时，$\mathcal{S}_4&amp;lt;0$ 。至此 Stokes 参量的意义解释完毕。&lt;/p&gt;
+&lt;h4 id=&#34;单色光的-stokes-参量&#34;&gt;单色光的 Stokes 参量&lt;/h4&gt;
+&lt;p&gt;若入射光是准单色的，并且沿 $z$ 轴传播，则可以写出准单色光在 $x$ 和 $y$ 方向的电场分量&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \left\{
+        \begin{aligned}
+            \boldsymbol{E}_x\left( t \right) &amp;= \hat{\boldsymbol{\imath}}E_{0x}\left( t \right)\cos\left[ \left( \bar{k}z-\bar{\omega}t \right)+\varepsilon_x\left( t \right) \right] \\
+            \boldsymbol{E}_y\left( t \right) &amp;= \hat{\boldsymbol{\jmath}}E_{0y}\left( t \right)\cos\left[ \left( \bar{k}z-\bar{\omega}t \right)+\varepsilon_y\left( t \right) \right]
+        \end{aligned}
+    \right.
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;其中，$\bar{k}$ 与 $\bar{\omega}$ 是在宏观尺度的空间和时间内，$k$ 与 $\omega$的平均值，$\varepsilon_x\left(t\right)$ 与 $\varepsilon_y\left(t\right)$ 分别是 $x$ 方向与 $y$ 方向电场的初相。合电场为 $\boldsymbol{E}\left( t \right) = \boldsymbol{E}_x\left( t \right)+\boldsymbol{E}_y\left( t \right)$ 。注意此处并不像 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be3&#34; &gt;图 3(b)&lt;/a&gt; 那样，只包含水平方向偏振的成分，而是包含各个方向的偏振成分。&lt;/p&gt;
+&lt;p&gt;有必要说明的是，对于任何光，$\left( \bar{k}z-\bar{\omega}t \right)$ 相对于 $E_x\left( t \right),E_y\left( t \right)$ 和 $\varepsilon_x\left( t \right),\varepsilon_y\left( t \right)$ 来说，变化都是相当迅速的，这是因为放出光子的原子从激发态跃迁回基态的时间十分短暂，量级大约在 $10^{-9}\mathrm{s}$ 。这些原子在每 $10^{-9}\mathrm{s}$ 量级内重复这段跃迁，源源不断地释放出光子，一束实实在在的光才能在宏观尺度上被观测到。如果是一束自然光，则只有在 $10^{-9}\mathrm{s}$ 量级内才能维持非常短暂的偏振态，超过这段时间范围，就不能辨识出这束光到底处于何种偏振态，因此自然光的电场是迅速变化且杂乱无章的。&lt;/p&gt;
+&lt;p&gt;由于此处考虑准单色光，准单色光又可以被认为是完全偏振的。其实，一个理想的单色平面波总是完全偏振的，因为单色性，这束光电场在每个方向上的分量时间周期和空间周期都相同。&lt;/p&gt;
+&lt;p&gt;下面将推导 Stokes 参量（ &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f3&#34; &gt;式3&lt;/a&gt; ）在准单色偏振光下，用电场表示的形式，然后用 Poincare（庞加莱 1854-1912）球法给出 Stokes 参量的另一种形式。&lt;/p&gt;
+&lt;h5 id=&#34;推导&#34;&gt;推导&lt;/h5&gt;
+&lt;p&gt;一束光的辐照度是 Poynting（坡印廷 1852-1914）矢量对时间的平均值，即 $I = \langle S \rangle _\mathrm{T} = c\epsilon_0\langle \boldsymbol{E}^2 \rangle _\mathrm{T}$ 。注意这段求平均的时间 $T$ 要远远大于这束光的时间周期 $\tau$ 。利用 $\boldsymbol{E}\left( t \right) = \boldsymbol{E}_x\left( t \right)+\boldsymbol{E}_y\left( t \right)$ ，有&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    I = c\epsilon_0\left[ \langle \boldsymbol{E}_x^2\left( t \right) \rangle _\mathrm{T}+\langle \boldsymbol{E}_y^2\left( t \right) \rangle _\mathrm{T} \right]
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;现在我们考虑其中的 $\langle \boldsymbol{E}_x^2\left( t \right) \rangle _\mathrm{T}$ 和 $\langle \boldsymbol{E}_y^2\left( t \right) \rangle _\mathrm{T}$ ，由于 $\boldsymbol{E}_x\left( t \right)$ 和 $\boldsymbol{E}_y\left( t \right)$ 在形式上相同（ &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f7&#34; &gt;式7&lt;/a&gt; ），所以我们只考虑其中的一个即可。&lt;/p&gt;
+&lt;p&gt;对于 $\langle \boldsymbol{E}_x^2\left( t \right) \rangle _\mathrm{T}$ ，有&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{E}_x^2\left( t \right) = E_{0x}^2\left( t \right)\cos^2\left[ \left( \bar{k}z-\bar{\omega}t \right)+\varepsilon_x\left( t \right) \right]
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;因此它对时间的平均 $\langle \boldsymbol{E}_x^2\left( t \right) \rangle _\mathrm{T}$ 为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式10&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \langle \boldsymbol{E}_x^2\left( t \right) \rangle _\mathrm{T} = \frac{1}{T}\int\limits_{t}^{t+T}E_{0x}^2\left( t \right)\cos^2\left[ \left( \bar{k}z-\bar{\omega}t \right)+\varepsilon_x\left( t \right) \right]\mathrm{d}t
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;前面我们提到过，$\left( \bar{k}z-\bar{\omega}t \right)$ 相对于 $E_x\left( t \right),E_y\left( t \right)$ 和 $\varepsilon_x\left( t \right),\varepsilon_y\left( t \right)$ 来说，变化相当迅速。也就是说，&lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f10&#34; &gt;式10&lt;/a&gt; 中振幅的平方 $E_{0x}^2\left( t \right)$ 相对于 $\cos^2$ 项来说变化得十分缓慢，因此在宏观尺度下的时间 $T$ 内，我们可以直接将 $E_{0x}^2\left( t \right)$ 对时间的平均值 $\langle E_{0x}^2\left( t \right) \rangle _\mathrm{T}$ 移出到积分号外，&lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f10&#34; &gt;式10&lt;/a&gt; 就变成了 $\langle E_{0x}^2\left( t \right) \rangle _\mathrm{T}$ 与 $\cos^2$ 项对时间的平均的乘积，即&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \langle \boldsymbol{E}_x^2\left( t \right) \rangle _\mathrm{T} = \langle E_{0x}^2\left( t \right) \rangle _\mathrm{T}\cdot\left( \frac{1}{T}\int\limits_{t}^{t+T}\cos^2\left[ \left( \bar{k}z-\bar{\omega}t \right)+\varepsilon_x\left( t \right) \right]\mathrm{d}t \right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;其中 $\cos^2$ 项对时间的平均为 $1/2$ 。至于 $1/2$ 是怎么来的，这属于数学问题，在研究偏振光的文章下解释其实有点浪费口舌了，便略去了。因此 $\langle \boldsymbol{E}_x^2\left( t \right) \rangle _\mathrm{T} = \langle E_{0x}^2\left( t \right) \rangle _\mathrm{T}/2$ 。同理，对 $\boldsymbol{E}_y\left( t \right)$ 也是如此，即 $\langle \boldsymbol{E}_y^2\left( t \right) \rangle _\mathrm{T} = \langle E_{0y}^2\left( t \right) \rangle _\mathrm{T}/2$ 。将其代入 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f8&#34; &gt;式8&lt;/a&gt; ，则辐照度可改写为&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    I = \frac{c\epsilon_0}{2}\left[ \langle E_{0x}^2\left( t \right) \rangle _\mathrm{T}+\langle E_{0y}^2\left( t \right) \rangle _\mathrm{T} \right]
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;我们只关心电场对辐照度的影响，因此不太严谨却合情合理地略去因子 $c\epsilon_0/2$ ，则进一步改写后的辐照度为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式13&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    I = \langle E_{0x}^2 \rangle _\mathrm{T}+\langle E_{0y}^2 \rangle _\mathrm{T}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;我们规定这是入射光的辐照度 $2I_0$ 。此处将 $\left( t \right)$ 略去了，因为显得有些杂乱。这样一来，由 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f3&#34; &gt;式3&lt;/a&gt; 得到 Stokes 参量的第一项 $\mathcal{S}_0$ 为&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \mathcal{S}_0 = \langle E_{0x}^2 \rangle _\mathrm{T}+\langle E_{0y}^2 \rangle _\mathrm{T}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;接下来推导 Stokes 参量的第二项 $\mathcal{S}_1$ 。之前提到过，$I_1 = I_\mathscr{N}/2 + I_\mathscr{P}$（ &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f5&#34; &gt;式5&lt;/a&gt; ），即 $\mathscr{N}$ 光的一半辐照度和 $\mathscr{P}$ 光的辐照度之和，此处考虑准单色光，因此 $I_\mathscr{N} = 0$ ，故 $I_1 = I_\mathscr{P}$ ，此处只有水平电场的平均值 $\langle E_{0x}^2 \rangle _\mathrm{T}$ 对辐照度 $I_\mathscr{P}$ 做出了贡献，竖直电场 $\langle E_{0y}^2 \rangle _\mathrm{T}$ 则完全不通过。由 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f13&#34; &gt;式13&lt;/a&gt; 得透射的辐照度 $I_1$ 为&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    I_1 = \langle E_{0x}^2 \rangle _\mathrm{T}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;将它与 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f3&#34; &gt;式3&lt;/a&gt; 和 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f13&#34; &gt;式13&lt;/a&gt; 联立，Stokes 参量的第二项 $\mathcal{S}_1$ 即为所求&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \mathcal{S}_1 = \langle E_{0x}^2 \rangle _\mathrm{T}-\langle E_{0y}^2 \rangle _\mathrm{T}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;然后考虑 Stokes 参量的第三项 $\mathcal{S}_2$ ，也就是准单色光经过透光轴位于 $x$ 轴上方 $+45^\circ$ 线偏振器的情况。此时透过去的辐照度为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式17&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    I_2 = \langle E_{045}^2 \rangle _\mathrm{T}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;其中，$E_{045}$ 是 $+45^\circ$ 方向电场 $\boldsymbol{E}_{45}$ 的振幅。$\boldsymbol{E}_{45}$ 是 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f7&#34; &gt;式7&lt;/a&gt; 中 $\boldsymbol{E}_{x}$ 和 $\boldsymbol{E}_y$ 在 $+45^\circ$ 方向电场分量之和，即&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式18&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{E}_{45} = \left( \hat{\boldsymbol{\imath}}+\hat{\boldsymbol{\jmath}} \right)\cdot\frac{1}{\sqrt{2}}\left( E_x+E_y \right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;且由 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f7&#34; &gt;式7&lt;/a&gt; 得 $\left( E_x+E_y \right)$ 为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式19&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    E_x+E_y = \sqrt{E_{0x}^2+E_{0y}^2+2E_{0x}E_{0y}\cos\left( \varepsilon \right)}\cos\left[ \left( \bar{k}z-\bar{\omega}t \right)+\alpha \right]
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;其中，$\varepsilon = \varepsilon_y-\varepsilon_x,\ \displaystyle\alpha = \arctan\left( \frac{E_{0x}\sin\left( \varepsilon _x \right)+E_{0y}\sin\left( \varepsilon_y \right)}{E_{0x}\cos\left( \varepsilon_x \right)+E_{0y}\cos\left( \varepsilon_y \right)} \right)$ 。&lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f19&#34; &gt;式19&lt;/a&gt; 的推导过程在这里就略去了，读者可以参阅几乎任何与相矢量的合成相关的物理文献。将 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f19&#34; &gt;式19&lt;/a&gt; 代入 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f18&#34; &gt;式18&lt;/a&gt; ，得&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{E}_{45} = \left( \hat{\boldsymbol{\imath}}+\hat{\boldsymbol{\jmath}} \right)\cdot\frac{1}{\sqrt{2}}\sqrt{E_{0x}^2+E_{0y}^2+2E_{0x}E_{0y}\cos\left( \varepsilon \right)}\cos\left[ \left( \bar{k}z-\bar{\omega}t \right)+\alpha \right]
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;因此 $\boldsymbol{E}_{45}$ 的振幅 $E_{045}$ 为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式21&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    E_{045} = \frac{1}{\sqrt{2}}\sqrt{E_{0x}^2+E_{0y}^2+2E_{0x}E_{0y}\cos\left( \varepsilon \right)}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;不要忘了我们在干什么，我们想要得到透过 3 号偏振片的辐照度。将 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f21&#34; &gt;式21&lt;/a&gt; 代入 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f17&#34; &gt;式17&lt;/a&gt; ，得&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    I_2 = \frac{1}{2}\left[ \langle E_{0x}^2 \rangle _\mathrm{T}+\langle E_{0y}^2 \rangle _\mathrm{T}+\langle 2E_{0x}E_{0y}\cos\left( \varepsilon \right) \rangle _\mathrm{T} \right]
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;将它与 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f3&#34; &gt;式3&lt;/a&gt; 和 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f13&#34; &gt;式13&lt;/a&gt; 联立，Stokes 参量的第三项 $\mathcal{S}_2$ 即为所求&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式23&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \mathcal{S}_2 = \langle 2E_{0x}E_{0y}\cos\left( \varepsilon \right) \rangle _\mathrm{T}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;最后考虑 $\mathcal{S}_3$ ，也就是通过 4 号滤光片的情况。我们还记得，4 号滤光片对 $\mathscr{R}$ 态光透明，但对 $\mathscr{L}$ 态光不透明，这可以看成一个四分之一波片与透光轴在 $+45^\circ$ 的线起偏器的组合，此处将对其进行具体说明。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图4&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p04.png&#34;
+	width=&#34;1200&#34;
+	height=&#34;866&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p04_hud4dbb98a71b8bdb66e8e37ad191870c2_108848_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p04_hud4dbb98a71b8bdb66e8e37ad191870c2_108848_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 4 ] 一束光依次经过快轴水平的四分之一波片（方形器件）和 &amp;#43;45° 线偏振器（圆形器件）。(a) ℛ 态光经过四分之一波片后线偏振方向平行于线偏振器的透光轴，可以透过。(b) ℒ 态光经过四分之一波片后线偏振方向垂直于线偏振器的透光轴，无法透过。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;138&#34;
+		data-flex-basis=&#34;332px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be4&#34; &gt;图4&lt;/a&gt; 所示，方形元件为四分之一波片，圆形元件为 $+45^\circ$ 线偏振器，这两个元件共同构成 4 号滤光器，使得它对 $\mathscr{R}$ 态光透明，但对 $\mathscr{L}$ 态光不透明。这是因为在 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be4&#34; &gt;图4(a)&lt;/a&gt; 中，$\mathscr{R}$ 态光进入到四分之一波片之后变成了 $+45^\circ\mathscr{P}$ 态光，因此可以透过 $+45^\circ$ 线偏振器；反之，在 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be4&#34; &gt;图4(b)&lt;/a&gt; 中，$\mathscr{L}$ 态光进入到四分之一波片之后变成了 $-45^\circ\mathscr{P}$ 态光（ $+135^\circ\mathscr{P}$ 态光），因此无法透过 $+45^\circ$ 线偏振器。&lt;/p&gt;
+&lt;p&gt;四分之一波片对辐照度没有任何影响，它只是改变了 $\boldsymbol{E}_x$ 和 $\boldsymbol{E}_y$ 的相位差而已，使得 $\boldsymbol{E}_x$ 比 $\boldsymbol{E}_y$ 超前 $\pi/2$ ，因此出射四分之一波片的光相位差为 $\left( \varepsilon - \pi/2 \right)$ 。这样的一束光再透过 $+45^\circ$ 线偏振器，情况就和推导 $\mathcal{S}_2$ 时的一模一样了，只不过相位从 $\varepsilon$ 变成了 $\left( \varepsilon - \pi/2 \right)$ ，即 $\cos\left( \varepsilon \right)$ 变成了 $\cos\left( \varepsilon - \pi/2 \right) = \sin\left( \varepsilon \right)$ 。这样一来，由 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f23&#34; &gt;式23&lt;/a&gt; 得 Stokes 参量的第四项为&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \mathcal{S}_3 = \langle 2E_{0x}E_{0y}\sin\left( \varepsilon \right) \rangle _\mathrm{T}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;至此，准单色光的 Stokes 参量全部推导完毕。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式25&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \left\{
+        \begin{array}{l}
+            \mathcal{S}_0 = \langle E_{0x}^2 \rangle _\mathrm{T}+\langle E_{0y}^2 \rangle _\mathrm{T}\\
+            \mathcal{S}_1 = \langle E_{0x}^2 \rangle _\mathrm{T}-\langle E_{0y}^2 \rangle _\mathrm{T}\\
+            \mathcal{S}_2 = \langle 2E_{0x}E_{0y}\cos\left( \varepsilon \right) \rangle _\mathrm{T}\\
+            \mathcal{S}_3 = \langle 2E_{0x}E_{0y}\cos\left( \varepsilon \right) \rangle _\mathrm{T}
+        \end{array}
+    \right.
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;若是入射光不是准单色光，而是理想单色光，则 $E_{0x},E_{0y},\varepsilon$ 对时间是常数，因此直接把 $\langle\ \ \rangle _\mathrm{T}$ 拿掉即可。&lt;/p&gt;
+&lt;p&gt;若我们对已经拿掉了 $\langle\ \ \rangle _\mathrm{T}$ 的 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f25&#34; &gt;式25&lt;/a&gt; 做如下处理：对 $\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3$ 求平方和，可以发现在理想单色光下，有&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式26&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \mathcal{S}_0^2 = \mathcal{S}_1^2+\mathcal{S}_2^2+\mathcal{S}_3^2
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;记住 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f26&#34; &gt;式26&lt;/a&gt; 的结论，这个式子确定了 Poincare 球（下面会作解释）。对于部分偏振光，因为 $\mathcal{S}_0^2$ 除了三个偏振态的总辐照度之外，还包含了杂乱的自然光的辐照度，所以有 $\mathcal{S}_0^2 &amp;gt; \mathcal{S}_1^2+\mathcal{S}_2^2+\mathcal{S}_3^2$ ，则部分偏振光的偏振度为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式27&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    V = \frac{\sqrt{\mathcal{S}_1^2+\mathcal{S}_2^2+\mathcal{S}_3^2}}{\mathcal{S}_0}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;例如，一个辐照度为 $1$ 的竖直 $\mathscr{P}$ 态光 $\langle 1,-1,0,0 \rangle$ 与一束辐照度为 $2$ 的 $\mathscr{R}$ 态光 $\langle 2,0,0,2 \rangle$ 相加，得到的合成波的 Stokes 矢量为 $\langle 3,-1,0,2 \rangle$ ，其偏振度为 $\sqrt{5}/3$ 。必须要注意的是，此处不应该用 $\displaystyle V = \frac{\mathcal{S}_1^2+\mathcal{S}_2^2+\mathcal{S}_3^2}{\mathcal{S}_0^2}$ 来代表偏振度，是因为偏振度 $V$ 是用辐照度来定义的，而不是用辐照度的平方。若使用辐照度的平方来定义偏振度，那偏振度就不再是线性的了，这在实际应用中是不合适的。&lt;/p&gt;
+&lt;p&gt;最后，更常见的操作是把 Stokes 矢量归一化，即将 Stokes 参量的第一项 $\mathcal{S}_0$ 变成 $1$ ，其余参量等比例地缩放，从而不改变 Stokes 矢量代表的偏振态。也就是说，从 $\langle \mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3 \rangle$ 变成 $\displaystyle\bigg\langle 1,\frac{\mathcal{S}_1}{\mathcal{S}_0},\frac{\mathcal{S}_2}{\mathcal{S}_0},\frac{\mathcal{S}_3}{\mathcal{S}_0} \bigg\rangle$ ，这在某些情况下十分方便。&lt;/p&gt;
+&lt;h5 id=&#34;用-poincare-球表示的-stokes-参量&#34;&gt;用 Poincare 球表示的 Stokes 参量&lt;/h5&gt;
+&lt;p&gt;刚才提到过理想单色光下有 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f26&#34; &gt;式26&lt;/a&gt; 的结论。一个很有趣的想法是，若把 $\mathcal{S}_0^2 = \mathcal{S}_1^2+\mathcal{S}_2^2+\mathcal{S}_3^2$ 中的 $\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3$ 看作三维直角坐标系中 $x,y,z$ 上的三个坐标值，则 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f26&#34; &gt;式26&lt;/a&gt; 可以确定这三个坐标处的矢量 $\boldsymbol{\mathcal{S}}_0$ 的模长是多少，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be5&#34; &gt;图5&lt;/a&gt; 所示。注意，此处我们研究的理想单色入射光的总辐照度 $\mathcal{S}_0$ 为一个定值，因此矢量 $\boldsymbol{\mathcal{S}}_0$ 转动时划过的区域确定了一个球面，这个球面叫做 Poincare 球。我们再规定 $2\psi$ 和 $2\chi$ 为确定矢量 $\boldsymbol{\mathcal{S}}_0$ 的两个方位角，此处使用 $2\psi,2\chi$ 而不是 $\psi,\chi$ 自然有它的道理，我们在后面就可以看到它的方便之处。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图5&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p05.png&#34;
+	width=&#34;1500&#34;
+	height=&#34;940&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p05_hue7b6a0d07cc0918a0e74dd6776c82b73_151502_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p05_hue7b6a0d07cc0918a0e74dd6776c82b73_151502_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 5 ] 一颗 Poincare 球。理想单色光的 Stokes 参量三个值可以确定一个球面，满足 𝒮₀² = 𝒮₁² &amp;#43; 𝒮₂² &amp;#43; 𝒮₃² ，角度 2ψ 和 2χ 用来确定矢量 𝓢₀ 的两个方位角。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;159&#34;
+		data-flex-basis=&#34;382px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;根据 Stokes 矢量的定义，完全线偏振入射光的 Stokes 矢量为 $\langle \mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,0 \rangle$ ，也就是说入射光的电场只包含水平、竖直、$+45^\circ$ 和 $-45^\circ$ 偏振态的线性组合，并不包含圆偏振光，此时由 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f26&#34; &gt;式26&lt;/a&gt; ，满足 $\mathcal{S}_0^2 = \mathcal{S}_1^2+\mathcal{S}_2^2$ ，这正好是球面上水平赤道（ $2\chi = 0$ ）处所有点的集合。由此得出结论：赤道上（ $2\chi = 0$ ）的任一点代表不同振动方向的线偏振光。进一步可以发现：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;$2\psi = 0$（ $\psi = 0$ ）处，即赤道上 $x$ 轴正方向的点代表完全水平偏振（ $\mathcal{S}_1 &amp;gt; 0,\mathcal{S}_2 = 0$ ）；&lt;/li&gt;
+&lt;li&gt;$2\psi = \pm 180^\circ$（ $\psi = \pm 90^\circ$ ）处，即赤道上 $x$ 轴负方向的点代表完全竖直偏振（ $\mathcal{S}_1 &amp;lt; 0,\mathcal{S}_2 = 0$ ）；&lt;/li&gt;
+&lt;li&gt;$2\psi = +90^\circ$（ $\psi = +45^\circ$ ）处，即赤道上 $y$ 轴正方向的点代表完全 $+45^\circ$ 偏振（ $\mathcal{S}_1 = 0,\mathcal{S}_2 &amp;gt; 0$ ）；&lt;/li&gt;
+&lt;li&gt;$2\psi = -90^\circ$（ $\psi = -45^\circ$ ）处，即赤道上 $y$ 轴负方向的点代表完全 $-45^\circ$ 偏振（ $\mathcal{S}_1 = 0,\mathcal{S}_2 &amp;lt; 0$ ）。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;注意到 $\psi$ 与偏振光的取向完全重合了。比如偏振光是 $+45^\circ$ 的 $\mathscr{P}$ 态，则 $\psi = +45^\circ$ 。这就是为什么方位角定义为 $2\psi$ 而不是 $\psi$ ，$\psi$ 正好就是线偏振光的角度，这是十分方便的。&lt;/p&gt;
+&lt;p&gt;在引言中有提到过：一束椭圆偏振光（ $\mathscr{E}$ 态光）由一束线偏振光（ $\mathscr{P}$ 态光）和圆偏振光组合而成，椭圆的长轴在 $\mathscr{P}$ 态光振动的方向。具体一点，右旋 $\mathscr{E}$ 态光由 $\mathscr{P}$ 态光和 $\mathscr{R}$ 态光组成，左旋 $\mathscr{E}$ 态光由 $\mathscr{P}$ 态光和 $\mathscr{L}$ 态光组成（其实在 Stokes 矢量这里，用引言的例子解释不太合适，后面会解释为什么）。刚才说过，给定了 $2\psi$ ，就可以确定 $\mathscr{P}$ 态光的方向。这时再令 $\mathcal{S}_3 \neq 0$ ，即 $2\chi \neq 0$ ，就确定了圆偏振光（不要忘了 $\mathcal{S}_3$ 代表入射光圆偏振部分的辐照度）。这样一来，在给定了 $2\psi$ 的情况下 $2\chi \neq 0$ ，就得到了 $\mathscr{E}$ 态光，这就是 Poincare 球上除了 $2\chi=0$（赤道）之外的所有点，此时 Stokes 矢量为 $\langle \mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3 \rangle$ 。进一步我们有：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;$\mathcal{S}_3 &amp;gt; 0$ ，即 $2\chi &amp;gt; 0$（ $\chi &amp;gt; 0$ ），亦即除了赤道外北半球上的所有点，代表了右旋 $\mathscr{E}$ 态光；&lt;/li&gt;
+&lt;li&gt;$\mathcal{S}_3 &amp;lt; 0$ ，即 $2\chi &amp;lt; 0$（ $\chi &amp;lt; 0$ ），亦即除了赤道外南半球上的所有点，代表了左旋 $\mathscr{E}$ 态光；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;特殊地，圆也属于椭圆（长轴和短轴等长的椭圆），即包含在南北半球中，则：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;$\mathcal{S}_3 = +\mathcal{S}_0 &amp;gt; 0$ ，且 $2\chi = +90^\circ$（ $\chi = +45^\circ$ ），即北极点，代表了 $\mathscr{R}$ 态光（右圆光）；&lt;/li&gt;
+&lt;li&gt;$\mathcal{S}_3 = -\mathcal{S}_0 &amp;lt; 0$ ，且 $2\chi = -90^\circ$（ $\chi = -45^\circ$ ），即南极点，代表了 $\mathscr{L}$ 态光（左圆光）；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;注意到 $\chi$ 与 $\boldsymbol{E_x}$ 和 $\boldsymbol{E_y}$ 的相位差 $\varepsilon = \varepsilon_y-\varepsilon_x$ 完全重合了。比如 $\mathscr{R}$ 态光（ $\chi = +45^\circ$ ）是由相位差 $\varepsilon = +45^\circ = +\pi/4$ 的 $\boldsymbol{E_x}$ 和 $\boldsymbol{E_y}$ 组成的；$\mathscr{L}$ 态光（ $\chi = -45^\circ$ ）是由相位差 $\varepsilon = -45^\circ = -\pi/4$ 的 $\boldsymbol{E_x}$ 和 $\boldsymbol{E_y}$ 组成的。就是为什么方位角定义为 $2\chi$ 而不是 $\chi$ ，$\chi$ 正好就是 $\boldsymbol{E_x}$ 和 $\boldsymbol{E_y}$ 的相位差   $\varepsilon$ ，这是十分方便的。另外，在入射光为完全圆偏振光的情况下，由于 $E_{0x} = E_{0y}$ ，因此 $\psi$ 取什么值也就不重要了（球面上南北极处 $\psi$ 不论取什么值都无所谓）。&lt;/p&gt;
+&lt;p&gt;综上所述，从一颗 Poincare 球的球面上可以找到一束理想单色光所有可能的偏振态。这下我们利用这些方位角所构成的几何关系（再仔细看看 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be5&#34; &gt;图5&lt;/a&gt; ），就很容易能写出 Stokes 四个参量 $\mathcal{S}_0,\mathcal{S}_1,\mathcal{S}_2,\mathcal{S}_3$&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式28&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \left\{
+        \begin{array}{l}
+            \mathcal{S}_0 = 2I_0\\
+            \mathcal{S}_1 = 2I_0\cos\left( 2\chi \right)\cos\left( 2\psi \right)\\
+            \mathcal{S}_2 = 2I_0\cos\left( 2\chi \right)\sin\left( 2\psi \right)\\
+            \mathcal{S}_3 = 2I_0\sin\left( 2\chi \right)
+        \end{array}
+    \right.
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;不论是 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f25&#34; &gt;式25&lt;/a&gt; 还是 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f28&#34; &gt;式28&lt;/a&gt; ，都十分优雅、简洁、美观。至此，用 Poincare 球表示的理想单色光的 Stokes 参量全部推导完毕。&lt;/p&gt;
+&lt;h3 id=&#34;mueller-矩阵&#34;&gt;Mueller 矩阵&lt;/h3&gt;
+&lt;p&gt;现在我们有了一束光的 Stokes 矢量，就可以对这束光添加偏振器件，以对其进行线性变换了。注意此处的都是理想偏振器件，例如一束光垂直地透过线偏振器，则不会有透光轴方向辐照度的损失（其实光线穿过一个实际的线偏振器时，两个正交分量的电场都要透过）。1943 年，Mueller 发明了一种矩阵（ Mueller 矩阵）来处理 Stokes 矢量，只需要对 Stokes 矢量左乘这个矩阵即可。例如，一束 $+45^\circ$ 的完全线偏振光 $\langle 1,0,1,0 \rangle$ 通过一个 $+45^\circ$ 线偏振片，则出射光的 Stokes 矢量为&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \left(
+    \begin{matrix}
+        1 \\ 0 \\ 1 \\ 0
+    \end{matrix}\right) = \frac{1}{2}\left(
+    \begin{matrix}
+        1 &amp; 0 &amp; 1 &amp; 0 \\
+        0 &amp; 0 &amp; 0 &amp; 0 \\
+        1 &amp; 0 &amp; 1 &amp; 0 \\
+        0 &amp; 0 &amp; 0 &amp; 0
+    \end{matrix}\right)\left(
+    \begin{matrix}
+        1 \\ 0 \\ 1 \\ 0
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;这表明，线偏振方向平行于偏振器透光轴的入射光，出射偏振器的光偏振态不变。其中的
+$\displaystyle\frac{1}{2}\left(
+\begin{smallmatrix}
+1&amp;amp;0&amp;amp;1&amp;amp;0\\
+0&amp;amp;0&amp;amp;0&amp;amp;0\\
+1&amp;amp;0&amp;amp;1&amp;amp;0\\
+0&amp;amp;0&amp;amp;0&amp;amp;0
+\end{smallmatrix}
+\right)$
+代表 $+45^\circ$ 线偏振片。为了控制出射光 Stokes 矢量的总辐照度，振幅因子 $1/2$ 是必须的，若没有 $1/2$ ，出射光的 Stokes 矢量为 $\langle 2,0,2,0 \rangle$ ，即总能量翻倍，这明显不正确。再举一个例子，一个左圆光 $\langle 1,0,0,-1 \rangle$ 通过快轴水平的四分之一波片（ &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be4&#34; &gt;图4(b)&lt;/a&gt; ），则出射光的 Stokes 矢量为&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \left(
+    \begin{matrix}
+        1 \\ 0 \\ -1 \\ 0
+    \end{matrix}\right) = \left(
+    \begin{matrix}
+        1 &amp; 0 &amp; 0 &amp; 0 \\
+        0 &amp; 1 &amp; 0 &amp; 0 \\
+        0 &amp; 0 &amp; 0 &amp; 1 \\
+        0 &amp; 0 &amp; -1 &amp; 0
+    \end{matrix}\right)\left(
+    \begin{matrix}
+        1 \\ 0 \\ 0 \\ -1
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;即出射快轴水平的四分之一波片的光为 $-45^\circ$ 线偏振光，这与 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be4&#34; &gt;图4(b)&lt;/a&gt; 完全符合。其中的
+$\displaystyle\left(
+\begin{smallmatrix}
+1&amp;amp;0&amp;amp;0&amp;amp;0\\
+0&amp;amp;1&amp;amp;0&amp;amp;0\\
+0&amp;amp;0&amp;amp;0&amp;amp;1\\
+0&amp;amp;0&amp;amp;-1&amp;amp;0
+\end{smallmatrix}
+\right)$
+代表快轴水平的四分之一波片，振幅因子为 $1$ 。&lt;/p&gt;
+&lt;p&gt;现在，本文将列出所有常见理想偏振器件的 Mueller 矩阵，见 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be6&#34; &gt;图6&lt;/a&gt; 。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图6&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p06.png&#34;
+	width=&#34;2000&#34;
+	height=&#34;2227&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p06_huce9a9b8ddbc453710b68bdcdcced6e49_443545_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p06_huce9a9b8ddbc453710b68bdcdcced6e49_443545_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 6 ] 常见理想偏振器件的 Mueller 矩阵。其中，各向同性滤光片和所有的波片（推迟器）振幅因子为 1 ，所有的线起偏器振幅因子为 1/2 ，圆起偏器的振幅因子也为 1/2（圆起偏器由线起偏器和四分之一波片组成），只是这里把振幅因子略去了。(a) 完全透明。(b) 完全不透明。(c1) 右圆光起偏器。(c2) 左圆光起偏器。(d1) 线起偏器，透光轴水平。(d2) 线起偏器，透光轴竖直。(d3) &amp;#43;45° 线起偏器。(d4) -45° 线起偏器。(e) 线起偏器，透光轴呈角度 α 。(f1) 四分之一波片，快轴水平。(f2) 四分之一波片，快轴竖直。(f3) 四分之一波片，快轴呈 &amp;#43;45° 。(f4) 四分之一波片，快轴呈 -45° 。(g1) 半波片，快轴水平。(g2) 半波片，快轴竖直。(g3) 半波片，快轴呈 &amp;#43;45° 。(g4) 半波片，快轴呈 -45° 。(h) 推迟量为 Δφ 的波片，快轴呈角度 α 。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;89&#34;
+		data-flex-basis=&#34;215px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中，$C = \cos\left( 2\alpha \right),S = \sin\left( 2\alpha \right)$ ，$\Delta\varphi$ 为推迟器的推迟量。&lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be6&#34; &gt;图6(e)&lt;/a&gt; 和 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be6&#34; &gt;图6(h)&lt;/a&gt; 分别给出了线偏振器和推迟器 Mueller 矩阵的一般形式。&lt;/p&gt;
+&lt;p&gt;当一束光线依次通过多个偏振器件，比如一束长轴在 $-45^\circ$ 方向的右旋 $\mathscr{E}$ 态部分偏振光，先通过快轴呈 $+45^\circ$ 的四分之一波片，Mueller 矩阵为 $\boldsymbol{M}_{\left[ \lambda/4\ \left( +45^\circ \right) \right]}$ ，再通过透光轴竖直的线偏振器，Mueller 矩阵为 $\boldsymbol{M}_{\left[ v \right]}$ ，则出射光为&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \begin{aligned}
+        \boldsymbol{\mathcal{S}}^\prime = \boldsymbol{M}_{\left[ v \right]}\boldsymbol{M}_{\left[ \lambda/4\ \left( +45^\circ \right)\right]}\boldsymbol{\mathcal{S}} &amp;=
+        \left(\begin{matrix}
+            1 &amp; -1 &amp; 0 &amp; 0\\
+            -1 &amp; 1 &amp; 0 &amp; 0\\
+            0 &amp; 0 &amp; 0 &amp; 0\\
+            0 &amp; 0 &amp; 0 &amp; 0
+        \end{matrix}\right)
+        \left(\begin{matrix}
+            1 &amp; 0 &amp; 0 &amp; 0\\
+            0 &amp; 0 &amp; 0 &amp; -1\\
+            0 &amp; 0 &amp; 1 &amp; 0\\
+            0 &amp; 1 &amp; 0 &amp; 0
+        \end{matrix}\right)
+        \left(\begin{matrix}
+            2\\
+            0\\
+            -1\\
+            1
+        \end{matrix}\right)\\\\
+        &amp;= \left(\begin{matrix}
+            1 &amp; 0 &amp; 0 &amp; 1\\
+            -1 &amp; 0 &amp; 0 &amp; -1\\
+            0 &amp; 0 &amp; 0 &amp; 0\\
+            0 &amp; 0 &amp; 0 &amp; 0
+        \end{matrix}\right)
+        \left(\begin{matrix}
+            2\\
+            0\\
+            -1\\
+            1
+        \end{matrix}\right) =
+        \left(\begin{matrix}
+            3\\
+            -3\\
+            0\\
+            0
+        \end{matrix}\right)
+    \end{aligned}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;这里一定要注意矩阵乘法的顺序，因为入射光 $\boldsymbol{\mathcal{S}}$ 先经过第一个器件改变了偏振态，出射光为 $\boldsymbol{M}_{\left[ \lambda/4\ \left( +45^\circ \right)\right]}\boldsymbol{\mathcal{S}}$ ，然后这束光再通过第二个器件，出射光为 $\boldsymbol{M}_{\left[ v \right]}\boldsymbol{M}_{\left[ \lambda/4\ \left( +45^\circ \right)\right]}\boldsymbol{\mathcal{S}}$ ，所以正确的顺序应该是 $\boldsymbol{M}_{\left[ v \right]}\boldsymbol{M}_{\left[ \lambda/4\ \left( +45^\circ \right)\right]}$ ，而不是 $\boldsymbol{M}_{\left[ \lambda/4\ \left( +45^\circ \right)\right]}\boldsymbol{M}_{\left[ v \right]}$ ，矩阵这样的性质称作 “不对易” 。我们当然可以先算 $\boldsymbol{M}_{\left[ \lambda/4\ \left( +45^\circ \right)\right]}\boldsymbol{\mathcal{S}}$ ，再左乘 $\boldsymbol{M}_{\left[ v \right]}$ 。不过我们也可以发现，若先把这两个器件看成一个整体，即先计算这些矩阵的乘积，再右乘这一束光 $\boldsymbol{\mathcal{S}}$ ，是非常方便的，这种操作不容易给计算上造成混乱。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;其实笔者认为，在大量的甚至十几二十几个矩阵的乘积面前，纯手算简直是蠢货行为，这种事情还是交给计算机好了。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;jones-矢量与-jones-矩阵&#34;&gt;Jones 矢量与 Jones 矩阵&lt;/h2&gt;
+&lt;h3 id=&#34;jones-矢量&#34;&gt;Jones 矢量&lt;/h3&gt;
+&lt;p&gt;Jones 矢量作为 Stokes 矢量的补充，这是由美国物理学家 Jones 于 1941 年发明的。Jones 并不是从辐照度着手，而是从电场正交分量着手，这是和 Stokes 矢量不同的地方。&lt;/p&gt;
+&lt;h4 id=&#34;对-jones-矢量的说明&#34;&gt;对 Jones 矢量的说明&lt;/h4&gt;
+&lt;p&gt;对于完全偏振波，表示一种偏振态最自然的方法就是用电场矢量本身&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式32&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{E} =
+    \left(\begin{matrix}
+        E_x\left( t \right)\\
+        E_y\left( t \right)
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;其中 $E_x\left( t \right)$ 和 $E_y\left( t \right)$ 分别是 $x$ 轴和 $y$ 轴电场分量的大小。由于 $E_x = E_{0x}\cos\left[ \left( kz-\omega t \right)+\varepsilon_x \right],E_y = E_{0y}\cos\left[ \left( kz-\omega t \right)+\varepsilon_y \right]$ ，这时可以将 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f32&#34; &gt;式32&lt;/a&gt; 改写为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式33&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \tilde{\boldsymbol{E}} =
+    \left(\begin{matrix}
+        E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}\\
+        E_{0y}\mathrm{e}^{\mathrm{j}\varphi_y}
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;这是一个复矢量，称作 Jones 矢量。其中的 $\varphi_x = \left( kz-\omega t \right)+\varepsilon_x,\varphi_y = \left( kz-\omega t \right)+\varepsilon_y$ ，为水平和竖直电场的相位。和 Stokes 矢量一样，Jones 矢量也可以拆解为不同偏振态的光之和，比如 $\tilde{\boldsymbol{E}} = \tilde{\boldsymbol{E}}_h+\tilde{\boldsymbol{E}}_v$ ，其中&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \tilde{\boldsymbol{E}}_h =
+    \left(\begin{matrix}
+        E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}\\
+        0
+    \end{matrix}\right),\quad
+    \tilde{\boldsymbol{E}}_v =
+    \left(\begin{matrix}
+        0\\
+        E_{0y}\mathrm{e}^{\mathrm{j}\varphi_y}
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;$\tilde{\boldsymbol{E}}_h$ 和 $\tilde{\boldsymbol{E}}_v$ 分别是水平电场和竖直电场，则一束光由两个正交分量组成。有了 Jones 矢量，我们就可以描述任何一束完全偏振光的偏振态，例如当 $E_{0x}=E_{0y},\varphi_x = \varphi_y$ 时，&lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f33&#34; &gt;式33&lt;/a&gt; 有&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式35&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \tilde{\boldsymbol{E}} =
+    \left(\begin{matrix}
+        E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}\\
+        E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}
+    \end{matrix}\right) = E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}
+    \left(\begin{matrix}
+        1\\
+        1
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;由于振幅相等，相位差为 $0$ ，因此这是 $+45^\circ$ 的 $\mathscr{P}$ 态。和 Stokes 矢量一样，&lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f35&#34; &gt;式35&lt;/a&gt; 中的 $E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}$ 叫做振幅因子。另外，$E_{0x}$ 是振幅信息，代表偏振态振动得有多剧烈；$\varphi_x$ 是相位信息，代表偏振态振动的频率如何，还有计时零点是从哪里开始的。可以发现，无论 Jones 矩阵是否包含振幅和相位信息，都不影响其偏振方向为 $\left( \hat{\boldsymbol{\imath}}+\hat{\boldsymbol{\jmath}} \right)$ ，因此我们不妨把 Jones 矢量的大小（模长）归一化，这在某些情况下十分方便。由于 $\langle 1,1 \rangle$ 张成的是实空间，故直接对 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f35&#34; &gt;式35&lt;/a&gt; 中的两个分量求平方和，得&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    2E_{0x}^2\mathrm{e}^{\mathrm{j}2\varphi_x} = E_{0x}^2\mathrm{e}^{\mathrm{j}2\varphi_x}+E_{0x}^2\mathrm{e}^{\mathrm{j}2\varphi_x}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;这就是 Jones 矢量大小（模长）的平方，若要把 Jones 矢量归一化，只需要对 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f35&#34; &gt;式35&lt;/a&gt; 除以 $\sqrt{2}E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}$ 即可，因此简化后的 Jones 矢量为&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{E}_{45} =
+    \frac{1}{\sqrt{2}}
+    \left(\begin{matrix}
+        1\\
+        1
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;这就是 $+45^\circ\mathscr{P}$ 态光。&lt;/p&gt;
+&lt;p&gt;再举个例子，考虑一束 $\mathscr{R}$ 态光，则 $E_{0x}=E_{0y}$ ，且 $\varphi_y$ 要比 $\varphi_x$ 超前 $\pi/2$ ，又因为我们采用了 $\left( kz-\omega t \right)$ 的形式，所以 $\varphi_y=\varphi_x-\pi/2$（这里读者可能会迷惑：对于 “超前” 为什么反而要减去 $-\pi/2$ ，后面会进行解释）。将其代入 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f33&#34; &gt;式33&lt;/a&gt; ，得 Jones 矢量为&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式38&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \tilde{\boldsymbol{E}}_\mathscr{R} =
+    \left(\begin{matrix}
+        E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}\\
+        E_{0x}\mathrm{e}^{\mathrm{j}\left( \varphi_x-\pi/2 \right)}
+    \end{matrix}\right) = E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}
+    \left(\begin{matrix}
+        1\\
+        \mathrm{e}^{\mathrm{j}\left( -\pi/2 \right)}
+    \end{matrix}\right) =
+    E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}
+    \left(\begin{matrix}
+        1\\
+        -\mathrm{j}
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;同样地，对 $\tilde{\boldsymbol{E}}_\mathscr{R}$ 归一化。和刚才的情况不同，此处 $\langle 1,-\mathrm{j} \rangle$ 张成的是复空间，因此 Jones 矢量的模长为 $\lvert \tilde{\boldsymbol{E}}_\mathscr{R} \rvert = \sqrt{\tilde{\boldsymbol{E}}_\mathscr{R}\tilde{\boldsymbol{E}}_\mathscr{R}^\ast}$ ，其中的 $\tilde{\boldsymbol{E}}_\mathscr{R}^\ast$ 为 $\tilde{\boldsymbol{E}}_\mathscr{R}$ 的共轭矢量（对复矢量的每个分量取共轭），因此&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \lvert \tilde{\boldsymbol{E}}_\mathscr{R} \rvert = E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}\sqrt{\langle 1,-\mathrm{j} \rangle
+    \left(\begin{matrix}
+        1\\
+        \mathrm{j}
+    \end{matrix}\right)
+    } = \sqrt{2}E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;若要把 Jones 矢量归一化，只需要对 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f38&#34; &gt;式38&lt;/a&gt; 除以 $\sqrt{2}E_{0x}\mathrm{e}^{\mathrm{j}\varphi_x}$ 即可，因此简化后的 Jones 矢量为&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \tilde{\boldsymbol{E}}_\mathscr{R} = \frac{1}{\sqrt{2}}\left(\begin{matrix}
+        1\\
+        -\mathrm{j}
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;这就是 $\mathscr{R}$ 态光。这和 $+45^\circ\mathscr{P}$ 态光（ &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f33&#34; &gt;式33&lt;/a&gt; ）有所区别，$\langle 1,-\mathrm{j} \rangle$ 中的 $-\mathrm{j}$ 包含了 $x$ 方向电场 $\boldsymbol{E}_x$ 和 $y$ 方向电场 $\boldsymbol{E}_y$ 的相位差信息。&lt;/p&gt;
+&lt;p&gt;下面将列出一张表格（ &lt;a class=&#34;link&#34; href=&#34;#%e8%a1%a81&#34; &gt;表1&lt;/a&gt; ），给出光线常见偏振态的 Jones 矢量。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;表1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;table-box&#34;&gt;
+    &lt;table&gt;
+        &lt;tr&gt;
+            &lt;td&gt;偏振态&lt;/td&gt;
+            &lt;td&gt;Jones 矢量&lt;/td&gt;
+            &lt;td class=&#34;border&#34;&gt;&lt;/td&gt;
+            &lt;td&gt;偏振态&lt;/td&gt;
+            &lt;td&gt;Jones 矢量&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;水平 $\mathscr{P}$ 态&lt;/td&gt;
+            &lt;td&gt;
+                $
+                \displaystyle
+                \left(\begin{matrix}
+                    1\\
+                    0
+                \end{matrix}\right)
+                $
+            &lt;/td&gt;
+            &lt;td class=&#34;border&#34;&gt;&lt;/td&gt;
+            &lt;td&gt;$-45^\circ$ 的 $\mathscr{P}$ 态&lt;/td&gt;
+            &lt;td&gt;
+                $
+                \displaystyle\frac{1}{\sqrt{2}}
+                \left(\begin{matrix}
+                    1\\
+                    -1
+                \end{matrix}\right)
+                $
+            &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;竖直 $\mathscr{P}$ 态&lt;/td&gt;
+            &lt;td&gt;
+                $
+                \displaystyle
+                \left(\begin{matrix}
+                    0\\
+                    1
+                \end{matrix}\right)
+                $
+            &lt;/td&gt;
+            &lt;td class=&#34;border&#34;&gt;&lt;/td&gt;
+            &lt;td&gt;$\mathscr{R}$ 态&lt;/td&gt;
+            &lt;td&gt;
+                $
+                \displaystyle\frac{1}{\sqrt{2}}
+                \left(\begin{matrix}
+                    1\\
+                    -\mathrm{j}
+                \end{matrix}\right)
+                $
+            &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;$+45^\circ$ 的 $\mathscr{P}$ 态&lt;/td&gt;
+            &lt;td&gt;
+                $
+                \displaystyle
+                \frac{1}{\sqrt{2}}
+                \left(\begin{matrix}
+                    1\\
+                    1
+                \end{matrix}\right)
+                $
+            &lt;/td&gt;
+            &lt;td class=&#34;border&#34;&gt;&lt;/td&gt;
+            &lt;td&gt;$\mathscr{L}$ 态&lt;/td&gt;
+            &lt;td&gt;
+                $
+                \displaystyle\frac{1}{\sqrt{2}}
+                \left(\begin{matrix}
+                    1\\
+                    \mathrm{j}
+                \end{matrix}\right)
+                $
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;figcaption&gt;
+        [ 表 1 ] 光线常见偏振态的 Jones 矢量。
+    &lt;/figcaption&gt;
+&lt;/div&gt;
+&lt;p&gt;另外，对于一束与水平方向呈 $\vartheta$ 角度的线偏振光，其 Jones 矢量为 $\langle\cos\left( \vartheta \right),\sin\left( \vartheta \right)\rangle$
+，这并不违背直觉，而且很直观，也的确如此。如果是多个偏振态的叠加，例如：一束由频率相同的水平 $\mathscr{P}$ 态光和 $\mathscr{L}$ 态光叠加而成的左旋 $\mathscr{E}$ 态光（ &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be1&#34; &gt;图1&lt;/a&gt; ），其中，水平 $\mathscr{P}$ 态光的振幅因子为 $\left( 1-1/\sqrt{2} \right)$ 。若想要求出它的 Jones 矢量，便直接对 $\left( 1-1/\sqrt{2} \right)\cdot\langle 1,0 \rangle$ 与 $\langle 1,\mathrm{j} \rangle /\sqrt{2}$ 相加即可，即正交的对应分量相加，得到 $\langle 1,\mathrm{j}/\sqrt{2} \rangle$ 。另一方面，我们也可以直接把上述 $\mathscr{L}$ 态光的水平直径拉长 $\sqrt{2}$ 倍，也就是水平振幅变成原来的 $\sqrt{2}$ 倍，竖直直径不变，也可以得到 $\langle 1,\mathrm{j}/\sqrt{2} \rangle$ 。由此可见 Jones 矢量在实际应用中也是十分灵活的。&lt;/p&gt;
+&lt;h4 id=&#34;遗留的问题&#34;&gt;遗留的问题&lt;/h4&gt;
+&lt;p&gt;现在我们要解决一个之前遗留的问题：为什么在电场相位为 $\left( kz-\omega t \right)$ 的形式下， $\boldsymbol{E}_y$ “超前” $\boldsymbol{E}_x$ 于 $\pi/2$ ，应该是 $\varphi_y-\varphi_x = -\pi/2$ 。&lt;/p&gt;
+&lt;p&gt;如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be7&#34; &gt;图7(a1)&lt;/a&gt; 所示，在 $\left( kz-\omega t \right)$ 的形式下，电场向右（ $z$ 轴正方向）传播。因此若我们在右面的某一点处看向光源，此时应该是线偏振光。请读者在脑中构建以下画面：我们在右面看向光源，波向着我们传来，此时我们看到了合电场 $\boldsymbol{E}$ 顺时针转动（ $\mathscr{R}$ 态），则需要在 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be7&#34; &gt;图7(a1)&lt;/a&gt; 的基础上，令 $\boldsymbol{E}_y$ 图像向右平移 $\pi/2$ 个相位，得到 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be7&#34; &gt;图7(a2)&lt;/a&gt; 。这对于正在看向光源的我们来说，$\boldsymbol{E}_y$ 比 $\boldsymbol{E}_x$ 更早一步到达我们的眼睛，即提前了 $\pi/2$ 。由于 $\boldsymbol{E}_y$ 图像向右平移相位 $\pi/2$ ，因此需要对 $\boldsymbol{E}_y$ 函数自变量减去 $\pi/2$ ，即加上 $-\pi/2$ 。这就是为什么在 $\left( kz-\omega t \right)$ 的形式下， $\varphi_y-\varphi_x = -\pi/2$ 代表 $\boldsymbol{E}_y$ 提前 $\boldsymbol{E}_x$ 于 $\pi/2$ 。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图7&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p07.png&#34;
+	width=&#34;2000&#34;
+	height=&#34;1016&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p07_hu2d24fb9d1547db0f4f859dd15dd048a4_225046_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p07_hu2d24fb9d1547db0f4f859dd15dd048a4_225046_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 7 ] 光波传播方向不同时对应不同相位差的解释。(a1) 波向右传播，x 和 y 方向电场同相，此时光波为线偏振波。(a2) 波向右传播，y 方向电场领先于 x 方向电场 π/2 ，此时光波为右圆光。(b1) 波向左传播，x 和 y 方向电场同相，此时光波为线偏振波。(b2) 波向左传播，y 方向电场领先于 x 方向电场 π/2 ，此时光波依旧为右圆光。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;196&#34;
+		data-flex-basis=&#34;472px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;反之，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be7&#34; &gt;图7(b1)&lt;/a&gt; 所示，若电场向左（ $z$ 轴负方向）传播，即在 $\left( \omega t-kz \right)$ 的形式下，在左面的某一点处看向光源的我们此时看到的是线偏振光。若我们依旧想要看到顺时针转动的电场（ $\mathscr{R}$ 态光），则和之前一样需要让 $\boldsymbol{E}_y$ 提前 $\pi/2$ 个相位进入我们的眼睛。此时需要令 $\boldsymbol{E}_y$ 图像向左平移 $\pi/2$ 个相位，得到  &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be7&#34; &gt;图7(b2)&lt;/a&gt; 。这就是为什么在 $\left( \omega t-kz \right)$ 的形式下， $\varphi_y-\varphi_x = \pi/2$ 代表 $\boldsymbol{E}_y$ 提前 $\boldsymbol{E}_x$ 于 $\pi/2$ 。&lt;/p&gt;
+&lt;p&gt;本文使用了 $\left( kz-\omega t \right)$ 的形式，所以直观理解起来可能会困难一些，但是在近代的著作于文献当中，比 $\left( \omega t-kz \right)$ 更加常用。在参看其他文献时，需要留意一下文中使用的时哪一种形式。&lt;/p&gt;
+&lt;h3 id=&#34;jones-矩阵&#34;&gt;Jones 矩阵&lt;/h3&gt;
+&lt;h4 id=&#34;理想偏振器的-jones-矩阵&#34;&gt;理想偏振器的 Jones 矩阵&lt;/h4&gt;
+&lt;p&gt;与用来处理 Stokes 矢量的 Mueller 矩阵一样，Jones 矩阵的用法和 Mueller 矩阵完全相同，只是用来处理 Jones 矢量罢了，此处不再过多赘述（也没必要）。下面将直接列出所有常见理想偏振器件的 Jones 矩阵，见 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be8&#34; &gt;图8&lt;/a&gt; 。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图8&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p08.png&#34;
+	width=&#34;2000&#34;
+	height=&#34;2250&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p08_hudbfaed28e4aafc1bbd74ac70a5113c9c_275527_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p08_hudbfaed28e4aafc1bbd74ac70a5113c9c_275527_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 8 ] 常见理想偏振器件的 Jones 矩阵，所有与相位有关的振幅因子全部略去，这是因为这个相位因子并不能使两个正交的电场产生相位差，所以它不重要。(a) 完全透明。(b) 完全不透明。(c1) 右圆光起偏器。(c2) 左圆光起偏器。(d1) 线起偏器，透光轴水平。(d2) 线起偏器，透光轴竖直。(d3) &amp;#43;45° 线起偏器。(d4) -45° 线起偏器。(e) 线起偏器，透光轴呈角度 α 。(f1) 四分之一波片，快轴水平。(f2) 四分之一波片，快轴竖直。(f3) 四分之一波片，快轴呈 &amp;#43;45° 。(f4) 四分之一波片，快轴呈 -45° 。(g1) 半波片，快轴水平。(g2) 半波片，快轴竖直。(g3) 半波片，快轴呈 &amp;#43;45° 。(g4) 半波片，快轴呈 -45° 。(h) 推迟量为 Δφ 的波片，快轴呈角度 α 。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;88&#34;
+		data-flex-basis=&#34;213px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中，$c = \cos\left( \alpha \right),s = \sin\left( \alpha \right)$ ，$\Delta\varphi$ 为推迟器的推迟量。&lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be8&#34; &gt;图8(e)&lt;/a&gt; 和 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be8&#34; &gt;图8(h)&lt;/a&gt; 分别给出了线偏振器和推迟器 Jones 矩阵的一般形式。&lt;/p&gt;
+&lt;h4 id=&#34;旋光性&#34;&gt;旋光性&lt;/h4&gt;
+&lt;p&gt;作为补充，在此讨论旋光性的 Jones 矩阵。当一束偏振光通过带有旋光性的物质时：比如扭转液晶、玉米糖浆，出射的偏振光会径向（以光传播的方向为轴）旋转某一角度。又或是由于 Faraday（法拉第 1791-1867）效应，$\mathrm{NaCl}$ 溶液可以使入射偏振光的电场逆时针偏转，电光 Kerr（克尔 1824-1907）效应可以使入射偏振光的电场在 $\mathrm{CHCl_3}$ 溶液中顺时针偏转。这些物质或是器件都可以使入射光的两个正交分量偏转一定角度 $\beta$ ，这就相当于入射光通过这些器件时，做了旋转的线性变换。&lt;/p&gt;
+&lt;p&gt;在引言中提到过，一个矢量 $\boldsymbol{\alpha}$ 做了线性变换 $\boldsymbol{M}$（记住，一个矩阵对应一个线性变换），则变换后的矢量为 $\boldsymbol{\alpha}^\prime = \boldsymbol{M\alpha}$ 。若设变换后的基底矢量分别落在了 $\boldsymbol{\hat{\imath}} = \langle \hat{\imath}_x,\hat{\imath}_y \rangle$ 和 $\boldsymbol{\hat{\jmath}} = \langle \hat{\jmath}_x,\hat{\jmath}_y \rangle$ 处，则该线性变换 $\boldsymbol{M}$ 为&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{M} = 
+    \left(\begin{matrix}
+        \hat{\imath}_x &amp; \hat{\jmath}_x\\
+        \hat{\imath}_y &amp; \hat{\jmath}_y
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;现在考察如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be9&#34; &gt;图9&lt;/a&gt; 所示的线性变换。从图中可以看出，整个二维线性空间做了旋转线性变换（保持原点位置不变是线性变换的基本素养）。也就是说，&lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be9&#34; &gt;图9(a)&lt;/a&gt; 中的任意一个矢量将随着整个空间 $xOy$ 顺时针转动 $\alpha$ ，最后落在 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be9&#34; &gt;图9(b)&lt;/a&gt; 中 $x^\prime Oy^\prime$ 中的某处。由于我们想要求出该线性变换 $\boldsymbol{M}$ ，所以只考虑基底将如何变换，并求出变换后的基底矢量坐标 $\hat{\imath}_x,\hat{\imath}_y,\hat{\jmath}_x,\hat{\jmath}_y$ 即可。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图9&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p09.png&#34;
+	width=&#34;1406&#34;
+	height=&#34;703&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p09_hu9045f95dc5b34cde8ac5c340ad7068a4_51543_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p09_hu9045f95dc5b34cde8ac5c340ad7068a4_51543_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 9 ] 旋转线性变换。(a) 原线性空间。(b) 整个线性空间逆时针旋转了角度 α 。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;200&#34;
+		data-flex-basis=&#34;480px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;根据 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be9&#34; &gt;图9(b)&lt;/a&gt; 中的几何关系，不难得出 $\boldsymbol{\hat{\imath}} = \langle \cos\left( \alpha \right),\sin\left( \alpha \right) \rangle ,\boldsymbol{\hat{\jmath}} = \langle -\sin\left( \alpha \right),\cos\left( \alpha \right) \rangle$ 。若此线性变换为 $\boldsymbol{R}=\boldsymbol{R}\left( \alpha \right)$ ，则&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式42&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \boldsymbol{R}\left( \alpha \right) = 
+    \left(\begin{matrix}
+        \cos\left( \alpha \right) &amp; -\sin\left( \alpha \right)\\
+        \sin\left( \alpha \right) &amp; \cos\left( \alpha \right)
+    \end{matrix}\right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f42&#34; &gt;式42&lt;/a&gt; 称作 “旋转矩阵”，它的作用正是使线性空间绕原点旋转。&lt;/p&gt;
+&lt;p&gt;这样一来，若想要对一束偏振光的电场逆时针旋转角度 $\beta$ ，只需要对这束光的 Jones 矢量左乘 $\boldsymbol{R}\left( \beta \right)$ 即可；如果是逆时针旋转角度 $\beta$ ，则左乘 $\boldsymbol{R}\left( -\beta \right)$ ，这正是具有旋光性的物质或器件该做的事。顺带一提，由于逆时针和顺时针刚好是相反的方向，也就是说一个矢量先逆时针旋转某一角度，再顺时针旋转同样的角度，刚好能回到原位，因此 $\boldsymbol{R}\left( \alpha \right)$ 和 $\boldsymbol{R}\left( -\alpha \right)$ 互为逆矩阵，即&lt;/p&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{R}^{-1}\left( \alpha \right) = \boldsymbol{R}\left( -\alpha \right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;记住这一点，这是非常方便的。&lt;/p&gt;
+&lt;h4 id=&#34;倾斜角为-alpha-的偏振器件&#34;&gt;倾斜角为 $\alpha$ 的偏振器件&lt;/h4&gt;
+&lt;p&gt;此处有必要说明 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be8&#34; &gt;图8(e)&lt;/a&gt; 和 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be8&#34; &gt;图8(h)&lt;/a&gt; 的由来。这两个偏振器件都与水平面有任意的夹角 $\alpha$ ，如果此时想要直接求出倾斜偏振器件的 Jones 矩阵，是相当困难且不直观的，所以我们不妨换一种思路。&lt;/p&gt;
+&lt;p&gt;如 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be10&#34; &gt;图10(a)&lt;/a&gt; 所示，这是一个四分之一波片，它的快轴与水平面呈夹角 $\alpha$ ，也就是说快轴相对于入射光的 $\boldsymbol{E}_x$ 呈夹角 $\alpha$ ，我们现在要研究的正是这种情况。另一方面，&lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be10&#34; &gt;图10(a)&lt;/a&gt; 也等价于 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be10&#34; &gt;图10(b)&lt;/a&gt; ，相当于四分之一波片的快轴保持水平，入射光的 $\boldsymbol{E}_{x^\prime}$ 相对于波片快轴呈夹角 $-\alpha$ ，即入射光的 $\boldsymbol{E}$ 顺时针旋转了角度 $\alpha$ 。只要利用 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be10&#34; &gt;图10(b)&lt;/a&gt; 把出射光的 Jones 矢量找到，最后把整体再转回来角度 $\alpha$ ，正是我们要的结果。具体操作如下。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;图10&#34;&gt;&lt;/a&gt; &lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p10.png&#34;
+	width=&#34;2199&#34;
+	height=&#34;1350&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p10_huf723c0a5efb19059f7b5b0747161aea2_151300_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E5%81%8F%E6%8C%AF%E5%85%89%E7%9A%84%E7%9F%A9%E9%98%B5%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E5%88%9D%E6%AD%A5/p10_huf723c0a5efb19059f7b5b0747161aea2_151300_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;[ 图 10 ] (a) 光透过快轴与水平方向呈角度 α 的四分之一波片。(b) 相当于波片快轴保持水平，光相对于波片反方向旋转角度 α 。&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;162&#34;
+		data-flex-basis=&#34;390px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;设入射光的 Jones 矢量为 $\boldsymbol{j}$ ，则获得出射光的 Jones 矢量 $\boldsymbol{j}^\prime$ 一共分为三步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;把入射光顺时针旋转 $\alpha$ ，则需要对 $\boldsymbol{j}$ 左乘旋转矩阵 $\boldsymbol{R}\left( -\alpha \right)$（ &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f42&#34; &gt;式42&lt;/a&gt; ），得到偏振光 $\boldsymbol{j}_1$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{j}_1 = \boldsymbol{R}\left( -\alpha \right)\boldsymbol{j}
+\end{equation}
+&lt;/div&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;让偏振光 $\boldsymbol{j}_1$ 通过快轴水平的四分之一波片，其 Jones 矩阵记为 $\boldsymbol{J}$（见 &lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be8&#34; &gt;图8&lt;/a&gt; ），得到偏振光 $\boldsymbol{j}_2$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{j}_2 = \boldsymbol{J}\boldsymbol{j}_1 = \boldsymbol{J}\boldsymbol{R}\left( -\alpha \right)\boldsymbol{j}
+\end{equation}
+&lt;/div&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;最后把偏振光 $\boldsymbol{j}_2$ 转回去，即对 $\boldsymbol{j}_2$ 左乘矩阵 $\boldsymbol{R}\left( \alpha \right)$ ，得到最终的偏振光 $\boldsymbol{j}^\prime$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;equation&#34;&gt;
+\begin{equation}
+    \boldsymbol{j}^\prime = \boldsymbol{R}\left( \alpha \right)\boldsymbol{j}_2 = \boldsymbol{R}\left( \alpha \right)\boldsymbol{J}\boldsymbol{R}\left( -\alpha \right)\boldsymbol{j}
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;这样一来，我们就找到了快轴水平四分之一波片 $\boldsymbol{J}$ 逆时针旋转角度 $\alpha$ 后的 Jones 矩阵 $\boldsymbol{J}\left( \alpha \right)$ ，如 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f47&#34; &gt;式47&lt;/a&gt; 所示。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;式47&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;equation&#34; id=&#34;eq-important&#34;&gt;
+\begin{equation}
+    \boldsymbol{J}\left( \alpha \right) = \boldsymbol{R}\left( \alpha \right)\boldsymbol{J}\boldsymbol{R}\left( -\alpha \right)
+\end{equation}
+&lt;/div&gt;
+&lt;p&gt;作为较啰嗦却必要的补充，$\boldsymbol{J}\left( \alpha \right)$ 可以是任何的偏振器，&lt;a class=&#34;link&#34; href=&#34;#%e5%9b%be8&#34; &gt;图8&lt;/a&gt; 中任意角度的线偏振器和波片就是这样推导得到的。&lt;/p&gt;
+&lt;p&gt;至此，我们已对 Jones 方法做出了全部的解释。&lt;/p&gt;
+&lt;h2 id=&#34;stokes-mueller-处理方法与-jones-处理方法的使用限制&#34;&gt;Stokes-Mueller 处理方法与 Jones 处理方法的使用限制&lt;/h2&gt;
+&lt;p&gt;在文章的最后，将对这二者的使用场景做些必要的补充。&lt;/p&gt;
+&lt;p&gt;首先是 Stokes 矢量。如果对两束光的 Stokes 矢量求和，即 $\boldsymbol{\mathcal{S}_1}+\boldsymbol{\mathcal{S}_2}$ ，只有当且仅当这两束光非相干（二者的相位差随时间变化）时，这样的操作才是被允许的。举个例子：现在有两束振幅相等，且在空间中重叠的水平 $\mathscr{P}$ 态光，二者的相位差保持 $\pi$ 不变，此时这二者的电场之和应每时每刻为 $0$ ，因此辐照度为 $0$（但这并不违背能量守恒，由于这些能量在干涉时被均匀地分散到了整个空间中，所以表现为辐照度为 $0$ ）。若我们写出这两束光的 Stokes 矢量为，$\boldsymbol{\mathcal{S}_1}=\boldsymbol{\mathcal{S}_2} = \langle 1,1,0,0 \rangle$ ，并进行求和，得到 $\langle 2,2,0,0 \rangle$ 。这样的结果是非常荒谬的，这就足以证明 Stokes 矢量对相干光不适用。其实这是由于 Stokes 矢量中并不包含任何相位信息导致的。&lt;/p&gt;
+&lt;p&gt;其次是 Jones 矢量，Jones 矢量只有对一束完全偏振光才适用。还记得我们利用 Stokes 矢量求出了一束光的偏振度 &lt;a class=&#34;link&#34; href=&#34;#%e5%bc%8f27&#34; &gt;式27&lt;/a&gt; ，因此 Stokes 矢量对部分偏振光也适用，这是因为 Stokes 参量中的第一项 $\mathcal{S}_0$ 中包含了非偏振光的信息。可是 Jones 矢量不行。不像 Stokes 矢量，由于 Jones 矢量代表的是电场的空间振幅，并且矢量中的两项还是正交的，再加上包含了相位信息 $\mathrm{e}^{\mathrm{j}\varphi}$ ，就注定了 Jones 矢量只适用于偏振光。&lt;/p&gt;
+&lt;p&gt;可能有的读者会想：在原子从激发态落回基态的时候释放出光子的频率数量级大约在 $10^9\mbox{次}/\mathrm{s}$ ，那岂不是这束相干长度极短的光在 $10^{-9}\mathrm{s}$ 这段极为短暂的时间内是完全偏振的吗。然而很遗憾的是，一束非偏振光的偏振态改变频率如此之快，以至于它在某一时刻的偏振态如何对我们已经完全没有用处了，这时我们只关心它的辐照度。在部分偏振光的情况下，偏振度 $V$ 要比某一时刻的偏振态有价值得多。&lt;/p&gt;
+&lt;h2 id=&#34;小结&#34;&gt;小结&lt;/h2&gt;
+&lt;p&gt;以上就是本篇文章的全部内容，然而这并不是矩阵方法的全部。比如完全偏振光下 Jones 矢量和 Stokes 矢量间的转化，当然还有理想偏振器件的 Jones 矩阵和 Mueller 矩阵间的转化，另外还有非理想的偏振器件的矩阵描述，这些都相当有趣，却远远超出本文的范围。感兴趣的读者可以自行查阅相关资料。&lt;/p&gt;
+&lt;h2 id=&#34;参考文献--references&#34;&gt;参考文献 | References&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;Hecht E., &lt;em&gt;&amp;ldquo;Optics, 5th ed.&amp;rdquo;&lt;/em&gt;, Pearson Education, New York, 2017.&lt;/li&gt;
+&lt;li&gt;廖延彪, &lt;em&gt;《偏振光学》&lt;/em&gt;, 科学出版社, 北京, 2003.&lt;/li&gt;
+&lt;li&gt;Hecht E., &lt;em&gt;&amp;quot;&lt;a class=&#34;link&#34; href=&#34;https://pubs.aip.org/aapt/ajp/article-abstract/38/9/1156/1048684/Note-on-an-Operational-Definition-of-the-Stokes?redirectedFrom=fulltext&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Node on an Operational Definition of the Stokes Parameters&lt;/a&gt;&amp;quot;&lt;/em&gt;, Am. J. Phys. 38, 11569, Adelphi University, Garden City, New York 11530, 1970.&lt;/li&gt;
+&lt;li&gt;William S. Bickel and Wilbur M. Bailey, &lt;em&gt;&amp;quot;&lt;a class=&#34;link&#34; href=&#34;https://pubs.aip.org/aapt/ajp/article-abstract/53/5/468/1052590/Stokes-vectors-Mueller-matrices-and-polarized?redirectedFrom=fulltext&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Stokes Vectors, Mueller matrices, and polarized scattered light&lt;/a&gt;&amp;quot;&lt;/em&gt;, Am. J. Phys. 53, 468, Physics Department, University of Arizona, Tucson, Arizona 85721, 1984.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
